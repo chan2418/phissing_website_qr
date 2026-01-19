@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malicious Website Detection using ML</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e066ff 0%, #6c7bfa 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+        h1 {
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .hello {
+            margin-top: 0;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            font-weight: 600;
+            letter-spacing: .2px;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+        .website-graphic {
+            width: 300px;
+            height: 250px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 3rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .browser-header {
+            height: 25px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .browser-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .red { background-color: #ff6058; }
+        .yellow { background-color: #ffbd2d; }
+        .green { background-color: #28ca42; }
+        .browser-content {
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .wireframe-element { background-color: #e0e0e0; border-radius: 5px; margin-bottom: 10px; }
+        .header-block { height: 20px; width: 70%; }
+        .content-block { height: 40px; width: 100%; }
+        .small-block { height: 20px; width: 40%; }
+        .floating-figure {
+            position: absolute; width: 30px; height: 30px;
+            background-color: rgba(100, 220, 255, 0.7); border-radius: 50%;
+            animation: float 10s infinite ease-in-out;
+        }
+        .figure1 { top: -10px; right: -5px; animation-delay: 0s; }
+        .figure2 { bottom: 40px; left: -15px; animation-delay: 2s; }
+        .figure3 { top: 50px; right: -15px; animation-delay: 1s; }
+        .figure4 { bottom: -10px; right: 50px; animation-delay: 3s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-15px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(15px) translateX(5px); }
+        }
+        .bubble {
+            position: absolute; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: bubble-float 15s infinite linear;
+        }
+        .bubble1 { width: 50px; height: 50px; top: 20%; left: 10%; animation-duration: 20s; }
+        .bubble2 { width: 30px; height: 30px; top: 50%; left: 20%; animation-duration: 25s; animation-delay: 2s; }
+        .bubble3 { width: 70px; height: 70px; bottom: 30%; right: 15%; animation-duration: 18s; }
+        @keyframes bubble-float {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.2; }
+            50% { transform: translateY(-100px) translateX(50px) scale(1.2); opacity: 0.5; }
+            100% { transform: translateY(-200px) translateX(100px) scale(0.8); opacity: 0.2; }
+        }
+        .start-button {
+            padding: 15px 40px; font-size: 1.5em;
+            background-color: #2e9fb3; color: white; border: none; border-radius: 5px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease; text-decoration: none;
+        }
+        .start-button:hover {
+            background-color: #25879a; transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4);
+        }
+        .note { margin-top: 10px; opacity: .9; }
+    </style>
+</head>
+<body>
+    <!-- Floating bubbles -->
+    <div class="bubble bubble1"></div>
+    <div class="bubble bubble2"></div>
+    <div class="bubble bubble3"></div>
+    
+    <div class="content">
+        <h1>Welcome to Malicious Website Detection using ML</h1>
+
+        {% if current_username %}
+          <p class="hello">Hi, <strong>{{ current_username }}</strong> 👋</p>
+        {% endif %}
+        
+        <div class="website-graphic">
+            <div class="browser-header">
+                <div class="browser-dot red"></div>
+                <div class="browser-dot yellow"></div>
+                <div class="browser-dot green"></div>
+            </div>
+            <div class="browser-content">
+                <div class="wireframe-element header-block"></div>
+                <div class="wireframe-element content-block"></div>
+                <div class="wireframe-element small-block"></div>
+            </div>
+            
+            <div class="floating-figure figure1"></div>
+            <div class="floating-figure figure2"></div>
+            <div class="floating-figure figure3"></div>
+            <div class="floating-figure figure4"></div>
+        </div>
+        
+        <!-- ✅ Smart routing: if logged in, go to /index, else go to /login -->
+        <a
+          href="{% if current_username %}{{ url_for('index') }}{% else %}{{ url_for('login') }}{% endif %}"
+          class="start-button"
+        >
+          START ANALYSIS
+        </a>
+
+        {% if not current_username %}
+          <p class="note">You’ll be asked to sign in first.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

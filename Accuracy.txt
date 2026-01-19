@@ -1,0 +1,6 @@
+DETECTION OF PHISHING WEBSITES MACHINE LEARNING
+
+Algorithms: GradientBoostingClassifier
+
+Training Accuracy : 0.989  Test Accuracy: 0.974
+

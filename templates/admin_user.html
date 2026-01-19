@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>User Detail · Phishing Websites</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <!-- Favicon -->
+  <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Rubik:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Icon Font Stylesheet -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+  <!-- Template Stylesheet -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+  <style>
+    /* Page-specific polish, navbar is unchanged */
+    .profile-card{border:none;border-radius:18px;box-shadow:0 18px 36px rgba(16,24,40,.08);overflow:hidden;}
+    .profile-left{background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;padding:28px;display:flex;align-items:center;gap:18px;}
+    .avatar{width:68px;height:68px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:0 0 68px;}
+    .avatar i{color:#2575fc;font-size:2rem;}
+    .role-pill{display:inline-block;border-radius:999px;padding:.35rem .7rem;font-weight:700;font-size:.85rem;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.28);color:#fff;}
+    .role-admin{background:rgba(16,185,129,.28);border-color:rgba(16,185,129,.6);}
+    .profile-right{padding:24px 28px;background:#fff;}
+    .kv .label{text-transform:uppercase;font-size:.78rem;letter-spacing:.04em;color:#6b7280;margin-bottom:4px;}
+    .kv .value{font-weight:700;color:#0f172a;}
+    .actions{border-top:1px solid #edf0f4;margin-top:18px;padding-top:16px;display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-soft{border:1px solid #dbe2ea;background:#fff;color:#0f172a;}
+    .btn-soft:hover{background:#f8fafc;}
+  </style>
+</head>
+
+<body>
+  <!-- Spinner Start -->
+  <div id="spinner"
+      class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+      <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+      </div>
+  </div>
+  <!-- Spinner End -->
+
+  <!-- Navbar Start (EXACT same as index.html/admin.html) -->
+  <div class="container-fluid position-relative p-0">
+  <nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0">
+    <a href="{{ url_for('first') }}" class="navbar-brand p-0">
+      <h1 class="m-0">Phishing Websites</h1>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="fa fa-bars"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <div class="navbar-nav ms-auto py-0">
+        <a href="{{ url_for('first') }}"
+           class="nav-item nav-link {% if request.endpoint=='first' %}active{% endif %}">Home</a>
+
+        <a href="{{ url_for('index') }}"
+           class="nav-item nav-link {% if request.endpoint=='index' %}active{% endif %}">Prediction</a>
+
+        {% if is_admin %}
+          <!-- Visible only for admins -->
+          <a href="{{ url_for('admin_dashboard') }}"
+             class="nav-item nav-link {% if request.endpoint=='admin_dashboard' %}active{% endif %}">Admin</a>
+        {% endif %}
+
+        {% if not current_username %}
+          <!-- Not logged in -->
+          <a href="{{ url_for('login') }}"
+             class="nav-item nav-link {% if request.endpoint=='login' %}active{% endif %}">Login</a>
+        {% else %}
+          <!-- Logged in: username dropdown -->
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+               href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i>
+              <span>{{ current_username }}</span>
+              {% if is_admin %}
+                <span class="badge bg-success ms-2">Admin</span>
+              {% endif %}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+              <li class="dropdown-header">
+                Signed in as <strong>{{ current_username }}</strong>
+                {% if is_admin %}<span class="badge bg-success ms-2">Admin</span>{% endif %}
+              </li>
+
+              <!-- NEW: History under username -->
+              <li>
+                <a class="dropdown-item d-flex align-items-center gap-2
+                           {% if request.endpoint=='history' %}active{% endif %}"
+                   href="{{ url_for('history') }}">
+                  <i class="bi bi-clock-history"></i> My History
+                </a>
+              </li>
+
+              {% if is_admin %}
+                <li>
+                  <a class="dropdown-item d-flex align-items-center gap-2
+                             {% if request.endpoint=='admin_history' %}active{% endif %}"
+                     href="{{ url_for('admin_history') }}">
+                    <i class="bi bi-journal-text"></i> All Checks
+                  </a>
+                </li>
+              {% endif %}
+
+              {% if is_admin %}
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item d-flex align-items-center gap-2
+                             {% if request.endpoint=='admin_dashboard' %}active{% endif %}"
+                     href="{{ url_for('admin_dashboard') }}">
+                    <i class="bi bi-speedometer2"></i> Admin Dashboard
+                  </a>
+                </li>
+              {% endif %}
+
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger d-flex align-items-center gap-2"
+                   href="{{ url_for('logout') }}">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid bg-primary py-5 bg-header" style="margin-bottom: 90px;">
+    <div class="row py-5">
+      <div class="col-12 pt-lg-5 mt-lg-5 text-center">
+        <h1 class="display-4 text-white animated zoomIn">Prediction</h1>
+        <i class="far fa-circle text-white px-2"></i>
+        <span class="h5 text-white">Phishing Websites</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Navbar End -->
+
+  <div class="container pb-5">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-soft mb-3">
+      &larr; Back to Admin
+    </a>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} mb-2">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Profile card -->
+    <div class="card profile-card">
+      <div class="row g-0">
+        <!-- Identity -->
+        <div class="col-lg-4 profile-left">
+          <div class="avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <div>
+            <h3 class="mb-1">{{ user.username }}</h3>
+            {% if user.is_admin == 1 %}
+              <span class="role-pill role-admin">Admin</span>
+            {% else %}
+              <span class="role-pill">User</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="col-lg-8 profile-right">
+          <div class="row kv gy-3">
+            <div class="col-md-6">
+              <div class="label">Email</div>
+              <div class="value">{{ user.email }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="label">Login Count</div>
+              <div class="value">{{ user.login_count or 0 }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="label">Last Login (UTC)</div>
+              <div class="value">{{ user.last_login or '—' }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="label">Created At (UTC)</div>
+              <div class="value">{{ user.created_at }}</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
+              <i class="bi bi-arrow-left"></i> Back to list
+            </a>
+
+            {% if user.username != current_username %}
+            <form action="{{ url_for('admin_toggle_admin', uid=user.id) }}" method="post" class="d-inline">
+                <button type="submit" class="btn {% if user.is_admin == 1 %}btn-warning{% else %}btn-success{% endif %}">
+                    {% if user.is_admin == 1 %}<i class="bi bi-shield-slash"></i> Revoke Admin{% else %}<i class="bi bi-shield-plus"></i> Make Admin{% endif %}
+                </button>
+            </form>
+            {% else %}
+              <button class="btn btn-light" disabled>
+                <i class="bi bi-person"></i> This is you
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="container-fluid bg-dark text-light mt-5">
+    <div class="container text-center py-3">
+      <p class="mb-0">&copy; 2025 Phishing Websites Detection. All Rights Reserved.</p>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='lib/counterup/counterup.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
