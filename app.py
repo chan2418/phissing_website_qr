@@ -27,7 +27,11 @@ import csv
 from io import StringIO
 import os
 from PIL import Image
-from pyzbar.pyzbar import decode
+try:
+    from pyzbar.pyzbar import decode
+except ImportError:
+    decode = None
+    print("WARNING: pyzbar not found. QR scanning will be disabled.")
 
 
 warnings.filterwarnings("ignore")
@@ -78,6 +82,9 @@ def close_db(exception):
         db.close()
 
 def extract_url_from_qr(image_path):
+    if decode is None:
+        print("QR decoding is disabled (pyzbar missing)")
+        return None
     img = Image.open(image_path)
     decoded_objects = decode(img)
     if decoded_objects:
