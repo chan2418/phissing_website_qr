@@ -28,10 +28,11 @@ from io import StringIO
 import os
 from PIL import Image
 try:
-    from pyzbar.pyzbar import decode
+    import cv2
+    OPENCV_AVAILABLE = True
 except ImportError:
-    decode = None
-    print("WARNING: pyzbar not found. QR scanning will be disabled.")
+    OPENCV_AVAILABLE = False
+    print("WARNING: cv2 (opencv-python) not found. QR scanning will be disabled.")
 
 
 warnings.filterwarnings("ignore")
@@ -82,14 +83,20 @@ def close_db(exception):
         db.close()
 
 def extract_url_from_qr(image_path):
-    if decode is None:
-        print("QR decoding is disabled (pyzbar missing)")
+    if not OPENCV_AVAILABLE:
+        print("QR decoding is disabled (cv2 missing)")
         return None
-    img = Image.open(image_path)
-    decoded_objects = decode(img)
-    if decoded_objects:
-        print("--------------",decoded_objects[0].data.decode("utf-8"))
-        return decoded_objects[0].data.decode("utf-8")
+    try:
+        img = cv2.imread(image_path)
+        if img is None:
+            return None
+        detector = cv2.QRCodeDetector()
+        data, bbox, _ = detector.detectAndDecode(img)
+        if data:
+            print("--------------", data)
+            return data
+    except Exception as e:
+        print(f"Error decoding QR with cv2: {e}")
     return None
 
 # ------------------ INIT DB ------------------
