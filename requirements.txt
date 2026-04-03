@@ -9,4 +9,4 @@ gunicorn
 requests
 Flask-Mail
 Pillow
-pyzbar
+opencv-python

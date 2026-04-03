@@ -99,8 +99,6 @@ pip install -r requirements.txt
 ---
 
 ## 📝 Usage Notes
-
-- **Default Admin**: `manigandan` (Password: `boopathi123456`) - *Created automatically on first run*.
 - **Register**: You can create a new account via the "Register" page.
 - **Test User**:
   - Username: `testuser`
